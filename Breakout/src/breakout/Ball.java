@@ -12,8 +12,8 @@ public class Ball extends Sprite implements Commons {
 
    public Ball() {
 
-     xdir = 1;
-     ydir = -1;
+     xdir = 0;
+     ydir = 1;
 
      ImageIcon ii = new ImageIcon(this.getClass().getResource(ball));
      image = ii.getImage();
@@ -39,14 +39,14 @@ public class Ball extends Sprite implements Commons {
       }
 
       if (y == 0) {
-        setYDir(1);
+        setYDir(-ydir);
       }
     }
 
     public void resetState() 
     {
-      x = 230;
-      y = 355;
+      x = 150;
+      y = 200;
     }
 
     public void setXDir(int x)

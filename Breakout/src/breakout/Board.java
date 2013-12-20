@@ -1,6 +1,8 @@
 package breakout;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -13,17 +15,21 @@ import java.awt.event.KeyEvent;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
 public class Board extends JPanel implements Commons {
 
     Image ii;
-    Timer timer;
+    Timer timer,gametimer;
     String message = "Game Over";
     Ball ball;
     Paddle paddle;
     Brick bricks[];
+    int lives;
+    int gtime;
 
     boolean ingame = true;
     int timerId;
@@ -32,11 +38,16 @@ public class Board extends JPanel implements Commons {
     public Board() {
 
         addKeyListener(new TAdapter());
+        
+        setBackground(Color.white);
+       
         setFocusable(true);
 
         bricks = new Brick[30];
         setDoubleBuffered(true);
         timer = new Timer();
+        gametimer = new Timer();     
+        gametimer.scheduleAtFixedRate(new ScheduleTask1(), 2000, 1000);
         timer.scheduleAtFixedRate(new ScheduleTask(), 1000, 10);
     }
 
@@ -49,7 +60,7 @@ public class Board extends JPanel implements Commons {
 
         ball = new Ball();
         paddle = new Paddle();
-
+        lives = 3;
 
         int k = 0;
         for (int i = 0; i < 5; i++) {
@@ -65,6 +76,8 @@ public class Board extends JPanel implements Commons {
         super.paint(g);
 
         if (ingame) {
+        	
+        	
             g.drawImage(ball.getImage(), ball.getX(), ball.getY(),
                         ball.getWidth(), ball.getHeight(), this);
             g.drawImage(paddle.getImage(), paddle.getX(), paddle.getY(),
@@ -76,7 +89,14 @@ public class Board extends JPanel implements Commons {
                                 bricks[i].getY(), bricks[i].getWidth(),
                                 bricks[i].getHeight(), this);
             }
-        } else {
+            
+            g.setColor(Color.black);
+            g.drawString("Lives left: " + lives, 5, 15);
+            g.drawString("Time: " + gtime, 5, 30);
+        } 
+        
+        
+        else {
 
             Font font = new Font("Verdana", Font.BOLD, 18);
             FontMetrics metr = this.getFontMetrics(font);
@@ -103,6 +123,14 @@ public class Board extends JPanel implements Commons {
             paddle.keyPressed(e);
         }
     }
+    
+    class ScheduleTask1 extends TimerTask {
+
+        public void run() {
+        	gtime++;
+
+        }
+    }
 
 
     class ScheduleTask extends TimerTask {
@@ -126,7 +154,17 @@ public class Board extends JPanel implements Commons {
     public void checkCollision() {
 
         if (ball.getRect().getMaxY() > Commons.BOTTOM) {
-            stopGame();
+        	lives--;
+        	if(lives <= 0){
+        		stopGame();
+        	}
+        	else{
+        		
+        		ball.setXDir(0);
+        		ball.setYDir(1);
+        		ball.resetState();
+        		
+        	}
         }
 
         for (int i = 0, j = 0; i < 30; i++) {
