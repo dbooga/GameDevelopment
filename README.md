@@ -1,7 +1,7 @@
 GameDev
 =======
 
-(OUR) path on becoming a game developer.
+(OUR) path to becoming game developers.
 
 Modified by: 
 brianla (Brian La)
